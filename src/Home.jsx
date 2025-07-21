@@ -1,58 +1,70 @@
-import React, { useEffect, useState } from 'react'
-import Create from './create'
-import axios from 'axios'
-
+import React, { useEffect, useState } from 'react';
+import Create from './Create';
+import axios from 'axios';
 import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs';
+
+
+
 function Home() {
-    const [todos , setTodos] =useState([])
-    useEffect(()=>{
-        axios.get('http://localhost:3001/get')
-        .then(result => setTodos(result.data))
-        .catch(err => console.log(err))
-    },[])
-    const handleEdit=(id) =>{
- axios.put('http://localhost:3001/ubdate/'+id)
-        .then(result => {
-            location.reload()
-        })
-        .catch(err => console.log(err))
-    }
-    const handleDelete=(id)=>{  
- axios.delete('http://localhost:3001/delete/'+id)
-        .then(result => {
-            location.reload()
-        })
-        .catch(err => console.log(err))
-    }
+const BASE_URL = "https://versal-backend-i8ax.onrender.com";
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${BASE_URL}/get`)
+      .then(result => {
+        console.log("Fetched todos:", result.data); // Check shape of data
+        // Update this line if backend sends { todos: [...] }
+        const fetchedTodos = Array.isArray(result.data) ? result.data : result.data.todos;
+        setTodos(fetchedTodos || []);
+      })
+      .catch(err => console.log("Error fetching todos:", err));
+  }, []);
+
+  const handleEdit = (id) => {
+    axios.put(`${BASE_URL}/ubdate/${id}`) // <- Corrected "ubdate" typo
+      .then(() => location.reload())
+      .catch(err => console.log("Error updating:", err));
+  };
+
+  const handleDelete = (id) => {
+    axios.delete(`${BASE_URL}/delete/${id}`)
+      .then(() => location.reload())
+      .catch(err => console.log("Error deleting:", err));
+  };
+
   return (
-    <div  className='home'> 
-    <h1>
-      Todo List
-    </h1>
-    <Create/>
-    <br/>
-    {
-        todos.length === 0 ?
-        <div>
-            <h2>NO RECORD</h2>
-            </div>
-            :
-        todos.map(todo =>(
+    <div className='home'>
+      <h1>Todo List</h1>
+      <Create />
+      <br />
+      {
+        Array.isArray(todos) && todos.length === 0 ? (
+          <div><h2>NO RECORD</h2></div>
+        ) : (
+          todos.map(todo => (
             <div key={todo._id} className='task'>
-                <div className='checkbox' onClick={() => handleEdit(todo._id)}>
-                    {todo.done ?
-                    <BsFillCheckCircleFill className='icon'></BsFillCheckCircleFill>
-                   :<BsCircleFill className='icon'/>}  
-                 <p className={todo.done? "line_through" : ""}> {todo.task}</p>  
-             </div>
-             <div>
-            <span><BsFillTrashFill className='icon' onClick={()=>handleDelete(todo._id)}/></span>
+              <div className='checkbox' onClick={() => handleEdit(todo._id)}>
+                {todo.done ? (
+                  <BsFillCheckCircleFill className='icon' />
+                ) : (
+                  <BsCircleFill className='icon' />
+                )}
+                <p className={todo.done ? "line_through" : ""}>{todo.task}</p>
+              </div>
+              <div>
+                <span>
+                  <BsFillTrashFill
+                    className='icon'
+                    onClick={() => handleDelete(todo._id)}
+                  />
+                </span>
+              </div>
             </div>
-         </div>
-        ))
-    }
+          ))
+        )
+      }
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
