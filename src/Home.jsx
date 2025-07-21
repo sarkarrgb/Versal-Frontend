@@ -1,13 +1,7 @@
-<<<<<<< HEAD
+
 import React, { useEffect, useState } from 'react';
 import Create from './Create';
 import axios from 'axios';
-=======
-import React, { useEffect, useState } from 'react'
-import Create from './Create'
-import axios from 'axios'
-
->>>>>>> d224fa8ef5a293e73f88885db390cc9a8a8ab8e3
 import { BsCircleFill, BsFillCheckCircleFill, BsFillTrashFill } from 'react-icons/bs';
 
 
